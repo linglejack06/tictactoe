@@ -67,25 +67,19 @@ def winner(board):
     """
     Returns the winner of the game, if there is one.
     """
-    o_win = False
-    x_win = False
 
     # check for horizontal win
     for row in board:
         if row[0] == row[1] == row[2] == X:
-            x_win = True
             return X
         elif row[0] == row[1] == row[2] == O:
-            o_win = True
             return O
 
     # check for vertical win
     for i in range(3):
         if board[0][i] == board[1][i] == board[2][i] == X:
-            x_win = True
             return X
         elif board[0][i] == board[1][i] == board[2][i] == O:
-            o_win = True
             return O
 
     # check for left-right diagonal
@@ -95,9 +89,9 @@ def winner(board):
         return O
 
     # check for right-left diagonal
-    if board [0][2] == board[1][1] == board[2][0] == X:
+    if board[0][2] == board[1][1] == board[2][0] == X:
         return X
-    elif board [0][2] == board[1][1] == board[2][0] == O:
+    elif board[0][2] == board[1][1] == board[2][0] == O:
         return O
 
     # no winner
@@ -108,18 +102,90 @@ def terminal(board):
     """
     Returns True if game is over, False otherwise.
     """
-    raise NotImplementedError
+
+    # check for winner
+    if winner(board) is not None:
+        return True
+
+    # check for tie
+    gameOver = True
+    for row in board:
+        for space in row:
+            if space == EMPTY:
+                gameOver = False
+
+    return gameOver
 
 
 def utility(board):
     """
     Returns 1 if X has won the game, -1 if O has won, 0 otherwise.
     """
-    raise NotImplementedError
+    win = winner(board)
+    if win == X:
+        return 1
+    elif win == O:
+        return -1
+    return 0
+
+
+def maximizing(board):
+    """
+    returns action that produces highest value from min value of results
+    """
+    action_list = actions(board)
+    max_value = -math.inf
+    optimal_action = None
+
+    # loop through actions swapping turns
+    for action in action_list:
+        resulting_board = result(board, action)
+        if terminal(resulting_board):
+            value = utility(resulting_board)
+            optimal_action = action
+            return value, optimal_action
+        else:
+            value, act = minimizing(resulting_board)
+        if value > max_value:
+            max_value = value
+            optimal_action = action
+
+    return max_value, optimal_action
+
+
+def minimizing(board):
+    """
+    returns action that produces lowest value from max value of results
+    """
+    action_list = actions(board)
+    min_value = math.inf
+    optimal_action = None
+
+    # loop through actions swapping turns
+    for action in action_list:
+        resulting_board = result(board, action)
+        if terminal(resulting_board):
+            value = utility(resulting_board)
+            optimal_action = action
+            return value, optimal_action
+        else:
+            value, act = maximizing(resulting_board)
+        if value < min_value:
+            min_value = value
+            optimal_action = action
+
+    return min_value, optimal_action
 
 
 def minimax(board):
     """
     Returns the optimal action for the current player on the board.
     """
-    raise NotImplementedError
+
+    if terminal(board):
+        return None
+
+    if player(board) == X:
+        return maximizing(board)[1]
+    else:
+        return minimizing(board)[1]
