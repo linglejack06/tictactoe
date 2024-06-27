@@ -129,7 +129,7 @@ def utility(board):
     return 0
 
 
-def maximizing(board):
+def maximizing(board, alpha, beta):
     """
     returns action that produces highest value from min value of results
     """
@@ -145,15 +145,18 @@ def maximizing(board):
             optimal_action = action
             return value, optimal_action
         else:
-            value, act = minimizing(resulting_board)
+            value, act = minimizing(resulting_board, alpha, beta)
         if value > max_value:
             max_value = value
+            alpha = max(alpha, max_value)
             optimal_action = action
+        if beta <= alpha:
+            break
 
     return max_value, optimal_action
 
 
-def minimizing(board):
+def minimizing(board, alpha, beta):
     """
     returns action that produces lowest value from max value of results
     """
@@ -169,10 +172,13 @@ def minimizing(board):
             optimal_action = action
             return value, optimal_action
         else:
-            value, act = maximizing(resulting_board)
+            value, act = maximizing(resulting_board, alpha, beta)
         if value < min_value:
             min_value = value
+            beta = min(beta, min_value)
             optimal_action = action
+        if beta <= alpha:
+            break
 
     return min_value, optimal_action
 
@@ -186,6 +192,6 @@ def minimax(board):
         return None
 
     if player(board) == X:
-        return maximizing(board)[1]
+        return maximizing(board, -math.inf, math.inf)[1]
     else:
-        return minimizing(board)[1]
+        return minimizing(board, -math.inf, math.inf)[1]
