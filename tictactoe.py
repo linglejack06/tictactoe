@@ -81,52 +81,27 @@ def winner(board):
 
     # check for vertical win
     for i in range(3):
-        if board[i][0] == X:
+        if board[0][i] == board[1][i] == board[2][i] == X:
             x_win = True
-            o_win = False
-        elif board[i][0] == O:
+            return X
+        elif board[0][i] == board[1][i] == board[2][i] == O:
             o_win = True
-            x_win = False
-        else:
-            x_win = False
-            o_win = False
-    if x_win:
-        return X
-    elif o_win:
-        return O
+            return O
 
     # check for left-right diagonal
-    for i in range(3):
-        if board[i][i] == X:
-            x_win = True
-            o_win = False
-        elif board[i][i] == O:
-            o_win = True
-            x_win = False
-        else:
-            x_win = False
-            o_win = False
-    if x_win:
+    if board[0][0] == board[1][1] == board[2][2] == X:
         return X
-    elif o_win:
+    elif board[0][0] == board[1][1] == board[2][2] == O:
         return O
 
     # check for right-left diagonal
-    for i in range(3):
-        for j in reversed(range(3)):
-            if board[i][j] == X:
-                x_win = True
-                o_win = False
-            elif board[i][j] == O:
-                o_win = True
-                x_win = False
-            else:
-                x_win = False
-                o_win = False
-    if x_win:
+    if board [0][2] == board[1][1] == board[2][0] == X:
         return X
-    elif o_win:
+    elif board [0][2] == board[1][1] == board[2][0] == O:
         return O
+
+    # no winner
+    return None
 
 
 def terminal(board):
